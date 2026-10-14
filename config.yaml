@@ -1,0 +1,92 @@
+# Topic Scout configuration. CLI flags override the matching values here.
+models:
+  expansion: claude-haiku-4-5-20251001
+  verification: claude-haiku-4-5-20251001
+  # Optional effort setting sent as output_config.effort (only for models that support it,
+  # e.g. claude-haiku-5-5). Leave null for claude-haiku-4-5.
+  effort: null
+  max_output_tokens: {expansion: 4000, verification: 4000}
+
+# USD per million tokens. Cache writes/reads are multipliers on the input price.
+pricing:
+  claude-haiku-4-5-20251001: {input: 1.00, output: 5.00}
+  claude-haiku-4-5: {input: 1.00, output: 5.00}
+  claude-haiku-5-5: {input: 0.10, output: 0.50}
+  claude-sonnet-5-5: {input: 2.00, output: 10.00}
+  claude-opus-5-5: {input: 4.00, output: 20.00}
+cache_write_multiplier: 1.25
+cache_read_multiplier: 0.10
+
+embedding_model: BAAI/bge-small-en-v1.5
+embedding_batch_size: 64
+embedding_query_prefix: ""        # e.g. "Represent this sentence for searching relevant passages: "
+
+thresholds: {t1: 0.30, t2: 0.35, t3: 0.42, probe_min_sim: 0.35, llm_min_confidence: 0.6}
+limits:
+  max_results_per_query: 30
+  top_k_per_topic: 15
+  bulk_cap: 2000
+  llm_batch_size: 8
+  budget_usd: 2.0
+  max_topics_per_item: 2
+  probe_page_size: 10
+  probe_embed_top: 5            # probe results embedded to judge branch similarity
+  text_for_matching_chars: 2000
+  llm_text_chars: 2500
+  readme_chars: 4000
+  query_keywords: 3             # keywords OR'd into one query (GitHub allows max 5 boolean operators)
+  bulk_keywords: 12             # L1/L2 keywords OR'd into one arXiv bulk query
+  arxiv_page_size: 200
+  github_page_size: 30
+  openalex_page_size: 50
+  sciencedirect_page_size: 25
+  hf_page_size: 50
+  sitemap_max_children: 20      # child sitemaps followed from a sitemap index
+  sitemap_fetch_cap: 150        # in-range sitemap pages fetched for title/description
+  s2_batch_size: 500
+  search_api_results: 10
+  llm_parse_retries: 1
+
+relevance_llm_weight: 0.5        # final relevance = (1-w)*similarity + w*LLM confidence
+
+# Ratings: log-scaled to 0-100 against these reference counts (count == ref -> 100).
+rating_reference: {stars: 10000, citations: 1000, likes: 1000, upvotes: 200}
+
+rate_limits_per_sec:
+  default: 2
+  export.arxiv.org: 0.33
+  api.github.com: 0.5
+  api.semanticscholar.org: 1
+  api.openalex.org: 5
+http:
+  timeout_s: 30
+  max_retries: 5
+  backoff_base_s: 1.0
+  backoff_max_s: 60
+  cache_ttl_s: 86400
+  max_rate_limit_wait_s: 900
+  contact_email: you@example.com   # used in the User-Agent; OPENALEX_MAILTO overrides
+github_date_field: created         # created | pushed
+probe_include_l1_keyword: true      # probe = anchor(L2) AND top L1 keyword (SPEC 5.2); false = anchor only
+github_split_or_queries: true      # one GitHub query per OR'd keyword (OR precedence is undocumented)
+cache_dir: ./.cache/topic_scout
+log_dir: ./logs
+output: {extra_columns: true}
+
+openalex_elsevier_publisher_id: P4310320990   # Elsevier BV in OpenAlex
+web_feed_paths: [feed, rss, index.xml, feed.xml, rss.xml, atom.xml, feed/]
+
+# Used for --dry-run cost estimates only.
+estimates:
+  bulk_items_per_l1: 300
+  query_items_per_query: 15
+  chars_per_token: 4
+  verify_prompt_overhead_tokens: 1500
+  verify_output_tokens_per_item: 150
+  expansion_tokens_per_node: 120
+
+static_arxiv_categories:   # used only with --no-llm (and as a fallback if expansion fails)
+  Document AI: [cs.CV, cs.CL, cs.IR]
+  Information Extraction: [cs.CL, cs.IR, cs.AI]
+  Agentic AI: [cs.AI, cs.CL, cs.MA]
+default_arxiv_categories: [cs.AI, cs.CL, cs.CV, cs.LG, cs.IR]

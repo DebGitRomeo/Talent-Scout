@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom">
+  <title>ArXiv Query</title>
+  <opensearch:totalResults>3</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <opensearch:itemsPerPage>2</opensearch:itemsPerPage>
+  <entry>
+    <id>http://arxiv.org/abs/2609.01234v2</id>
+    <published>2026-09-03T17:59:59Z</published>
+    <updated>2026-09-10T10:00:00Z</updated>
+    <title>Handwritten Text Recognition with
+      Diffusion Priors</title>
+    <summary>We present a handwritten text recognition model for historical documents. It improves character error rate on IAM.</summary>
+    <author><name>A. Author</name></author>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2609.05678v1</id>
+    <published>2026-09-12T08:00:00Z</published>
+    <title>Table Structure Recognition via Graph Transformers</title>
+    <summary>Table structure recognition for scanned PDFs using graph transformers over cells.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+  </entry>
+</feed>

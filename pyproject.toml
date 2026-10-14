@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "topic-scout"
+version = "1.0.0"
+description = "Search sources for new content matching a three-level topic taxonomy and write a rated, summarised Excel catalogue."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.27",
+    "pydantic>=2.6",
+    "pydantic-settings>=2.2",
+    "typer>=0.12",
+    "pandas>=2.1",
+    "openpyxl>=3.1",
+    "numpy>=1.26",
+    "pyyaml>=6.0",
+    "anthropic>=0.40",
+    "feedparser>=6.0",
+    "trafilatura>=1.8",
+    "htmldate>=1.8",
+    "diskcache>=5.6",
+    "tenacity>=8.2",
+    "python-dotenv>=1.0",
+    "rich>=13.7",
+]
+
+[project.optional-dependencies]
+embeddings = ["sentence-transformers>=2.7"]
+dev = ["pytest>=8", "pytest-asyncio>=0.23", "respx>=0.21", "ruff>=0.4"]
+
+[project.scripts]
+topic-scout = "topic_scout.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["topic_scout*"]
+
+[tool.setuptools.package-data]
+topic_scout = ["prompts/*.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = ["live: hits real APIs; needs network and keys in .env"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "ANN"]
+ignore = ["ANN401", "B008"]  # B008: typer declares CLI options as defaults
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["ANN"]

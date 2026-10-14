@@ -1,0 +1,15 @@
+# Topic Scout — source registry
+# One source per line. Lines starting with # are comments; blank lines are ignored.
+# Format:  <url-or-domain> [| <type hint>] [| <adapter override>]
+#   type hint     : code | paper | blog | whitepaper | model | dataset   (optional; adapter default is used otherwise)
+#   adapter       : github | arxiv | sciencedirect | huggingface | rss | web   (optional; auto-detected from the domain)
+
+https://github.com                              | code
+https://arxiv.org                               | paper
+https://www.sciencedirect.com                   | paper
+https://huggingface.co/papers                   | paper  | huggingface
+https://www.andrewng.org                        | blog
+https://www.deeplearning.ai/the-batch/          | blog
+https://aws.amazon.com/blogs/machine-learning/  | blog
+https://research.google/blog/                   | blog
+https://www.anthropic.com/research              | blog

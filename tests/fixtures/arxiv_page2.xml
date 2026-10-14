@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">
+  <title>ArXiv Query</title>
+  <opensearch:totalResults>3</opensearch:totalResults>
+  <opensearch:startIndex>2</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2609.09999v1</id>
+    <published>2026-09-20T08:00:00Z</published>
+    <title>Long-term Memory for LLM Agents</title>
+    <summary>A memory architecture that lets LLM agents retain information across sessions.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+  </entry>
+</feed>

@@ -1,0 +1,15 @@
+# Deviations and interpretation notes
+
+The code was written in a sandbox whose network proxy blocked arXiv and the GitHub search API, so none of the API behaviour below could be checked against the live services. All adapters were built from the official API documentation and tested against recorded fixtures. If the live smoke test (`pytest -m live`) shows that an API behaves differently, follow the live API and record the difference here.
+
+| Area | SPEC says | Implementation | Why |
+|---|---|---|---|
+| GitHub L3 query | `keywords(L3) AND anchor_term(L2)` as one query | By default each OR'd keyword is its own query (`"kw" anchor in:name,description,readme created:A..B`), and the results are merged. Set `github_split_or_queries: false` to send one combined query instead. | GitHub doesn't document how `OR` binds next to other terms in repository search, so one combined query could silently mean something else. The split costs `limits.query_keywords` (3) calls per L3 instead of 1. |
+| Hugging Face daily papers | One retrieval per L1 per source | One listing per run (one request per day in the range), reused for every L1 | The daily-papers listing doesn't depend on the topic, so fetching it per L1 would repeat identical calls. The same applies to RSS feeds and sitemaps. |
+| Hugging Face models/datasets | "model/dataset search API" | Used when the source URL is `huggingface.co/models` or `/datasets`. The Hub search matches substrings of repo IDs, so each keyword is searched separately, and `createdAt` is filtered locally. | The Hub has no server-side date filter. |
+| Web adapter capability | `bulk` | Decided at run time: feed → bulk, dated sitemap → bulk, otherwise search API → query. If none of these work, the source is skipped with a warning. | The capability isn't known until discovery has run. In `--dry-run` web sources are shown as bulk, with a note. |
+| Probe query | `anchor_term(L2) + top L1 keyword` | Implemented as `anchor(L2) AND keyword(L1)`. Set `probe_include_l1_keyword: false` to probe with the L2 anchor alone. | Requiring the L1 keyword can prune niche branches too aggressively on GitHub. The switch lets you tune this without code changes. |
+| LLM response with two assigned L3s | One `level3_path` per candidate | Each candidate is sent once, with all its assigned paths. The returned `level3_path` replaces the primary assignment, and any secondary assignment (from `max_topics_per_item`) keeps the same summary. | This avoids paying twice to verify the same item. |
+| Relevance score | "final score 0–1" | `(1 - w) * L3 similarity + w * LLM confidence`, with `w = relevance_llm_weight` (0.5). With `--no-llm` it is the similarity alone. | The spec doesn't define the formula. |
+| Extra columns | "can be hidden" | `output.extra_columns: false` hides columns 9–14 in Excel. They are still written, because upsert needs `First seen`. | Hiding keeps the upsert history. |
+| Model IDs | `claude-haiku-4-5-20251001` | Kept as the default. `claude-haiku-5-5` (about 10× cheaper) is priced in `config.yaml`, and `models.effort` is sent only when set. | Following the spec; switching models is a config change. |
